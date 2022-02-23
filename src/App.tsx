@@ -9,6 +9,8 @@ import Header from "./components/Header";
 import Collection from "./components/Collection";
 import { useWallet } from "./hooks/useWallet";
 
+//from https://medium.com/@stevelukis/integrating-react-website-to-ethereum-network-with-web3-js-case-study-nft-minting-website-ae94c4107adc
+
 function App() {
     const { currentAccount, setCurrentAccount } = useWallet();
     return (
