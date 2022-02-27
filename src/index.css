@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'FatFrank';
+    src: local('FatFrank'), url(./fonts/FatFrank.ttf) format('truetype');
+}
+
+* {
+    font-family: "FatFrank";
+}

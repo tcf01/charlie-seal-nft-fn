@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Col, Container, Image, Row } from "react-bootstrap";
-import { buyNFT, getMaxSupply, getTotalSupply } from "../../network/ethereum";
-import { style } from "./Home.styles";
+import { buyNFT, getMaxSupply, getTotalSupply, getStartDate } from "../../network/ethereum";
+// import { style } from "./Home.styles";
 import Logo from '../../images/Logo.jpg';
 import MintPanel from '../MintPanel';
-import { basename } from 'path';
 import LoadingOverlay from 'react-loading-overlay';
+import moment from 'moment-timezone'
+
+
 
 type Props = {
     currentAccount?: string;
@@ -13,6 +15,8 @@ type Props = {
 
 const Home: React.FC<Props> = ({ currentAccount }) => {
     const [isLoadingOpen, setIsLoadingOpen] = useState(false)
+    const [mintStartDate, setMintStartDate] = useState<any>("")
+    const [isStartMintBegin, setIsStartMintBegin] = useState(false)
     const [allSupply, setAllSupply] = useState(0)
     const [tokenLeft, setTokenLeft] = useState<number | null>(null);
     const [error, setError] = useState(false);
@@ -26,7 +30,21 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
             setAllSupply(totalSupply)
             setTokenLeft(maxSupply - totalSupply);
         }
+
+        const fetchMintStartDate = async () => {
+            const startDate = await getStartDate()
+            const startDateInHKGTime = moment(startDate).tz('Asia/Hong_Kong')
+            const currTimeInHKGTime = moment(Date.now()).tz('Asia/Hong_Kong')
+            const isStartBegin = startDateInHKGTime.isAfter(currTimeInHKGTime);
+
+
+            setMintStartDate(startDate)
+            setIsStartMintBegin(isStartBegin)
+        }
+
+
         fetchSupply();
+        fetchMintStartDate()
     }, []);
 
     const onBuyClick = async (mintNum: number) => {
@@ -39,7 +57,9 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
 
                 return
             } else {
-                await buyNFT(mintNum);
+                const result = await buyNFT(mintNum);
+
+                console.log(result)
             }
         } catch (error) {
             setError(true);
@@ -89,7 +109,7 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
                             </Col>
                         </Row>
                         <Row>
-                            <MintPanel allSupply={allSupply} tokenLeft={tokenLeft || 0} submitBtnText={"Mint"} handleMint={(e: any) => onBuyClick(e)} />
+                            <MintPanel isStartMintBegin={isStartMintBegin} mintStartDate={mintStartDate} allSupply={allSupply} tokenLeft={tokenLeft || 0} submitBtnText={"Mint!!!"} handleMint={(e: any) => onBuyClick(e)} />
                             {error &&
                                 <Col className="mt-3 d-flex justify-content-md-center"
                                     lg={12}>

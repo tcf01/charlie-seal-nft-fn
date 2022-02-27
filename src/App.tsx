@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css'
+import './fonts/FatFrank.ttf'
 
 // Components
 import Home from "./components/Home";
@@ -13,10 +15,9 @@ import { useWallet } from "./hooks/useWallet";
 
 function App() {
     const { currentAccount, setCurrentAccount } = useWallet();
-    return (
-       
-            <Router>
 
+    return (
+            <Router>
                 <Header
                     currentAccount={currentAccount}
                     setCurrentAccount={setCurrentAccount}
@@ -31,8 +32,6 @@ function App() {
                     />
                 </Routes>
             </Router>
-
-
     );
 }
 

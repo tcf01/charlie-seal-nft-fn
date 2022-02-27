@@ -1,0 +1,3 @@
+export const CONSTANTS = {
+    FREE_MINT_NFT_PRICE_IN_ETH: 0.005
+}

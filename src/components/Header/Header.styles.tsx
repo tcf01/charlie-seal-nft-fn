@@ -14,7 +14,7 @@ export const style =
                 }
                 
                 .navbar {
-                    background-color: #ffde17;
+                    background-color: #d2e3f5;
                 }
                 
                 .btn-rounded {

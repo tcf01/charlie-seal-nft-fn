@@ -18,7 +18,7 @@ export const getTotalSupply = async () => {
     try {
 
         const totalSupply = await contract?.methods?.totalSupply();
-        
+
 
         return totalSupply
     } catch (e) {
@@ -28,7 +28,7 @@ export const getTotalSupply = async () => {
 
 export const getMaxSupply = async () => {
     const maxSupply = await contract.methods.MAX_SUPPLY;
-    
+
     return maxSupply
 }
 
@@ -40,8 +40,10 @@ export const buyNFT = async (number: number) => {
         value: web3.utils.toHex(web3.utils.toWei('0.05', 'ether')),
         gasLimit: web3.utils.toHex(300000),
         gasPrice: web3.utils.toHex(web3.utils.toWei('350', 'gwei')),
-        data: contract.methods.mint(number).encodeABI()
+        data: contract.methods.freeMint(number, 1).encodeABI()
     };
+
+    
     return await ethereum.request({
         method: 'eth_sendTransaction',
         params: [transactionParams]
@@ -54,4 +56,12 @@ export const getToken = async (address: string) => {
 
 export const getTokenUri = async (tokenId: number) => {
     return await contract.methods.tokenURI(tokenId).call();
+}
+
+export const getStartDate = async () => {
+    const startDate = await contract?.methods?.totalSupply();  //function is not yet complete
+
+    //NOTE: date now is only for testing
+    return Date.now();
+    // return startDate
 }
