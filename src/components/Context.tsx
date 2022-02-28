@@ -1,5 +1,5 @@
 
-import React, { useState, SetStateAction, Dispatch } from 'react'
+import React, { useState, SetStateAction, Dispatch, useContext } from 'react'
 
 interface ContextProviderProps {
     children: any
@@ -7,45 +7,60 @@ interface ContextProviderProps {
 
 type ContextDefaultValues = {
     isModalOpen: boolean,
-    setIsModalOpen: () => void /* Dispatch<SetStateAction<any>> */,
-    modalText: string,
-    setModalText: () => void/* Dispatch<SetStateAction<any>> */
+    setIsModalOpen: Dispatch<SetStateAction<any>>,
+    modalTitle: string,
+    setModalTitle: Dispatch<SetStateAction<any>>,
+    modalContent: string,
+    setModalContent: Dispatch<SetStateAction<any>>,
+    handleModalOpen: (modalTitle: string, modalContent: string) => void
+
 }
 
 const defaultValues: ContextDefaultValues = {
     isModalOpen: false,
     setIsModalOpen: () => null,
-    modalText: "",
-    setModalText: () => ""
+    modalTitle: "",
+    setModalTitle: () => "",
+    modalContent: "",
+    setModalContent: () => "",
+    handleModalOpen: (modalTitle: string, modalContent: string) => { }
 }
 
 
 
-const Context = React.createContext<ContextDefaultValues>(defaultValues)
+const AppContext = React.createContext<ContextDefaultValues>(defaultValues)
 
 
-const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
-
+export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [modalText, setModalText] = useState("")
+    const [modalTitle, setModalTitle] = useState("")
+    const [modalContent, setModalContent] = useState("")
+
+    const handleModalOpen = (modalTitle: string, modalContent: string) => {
+
+        setIsModalOpen(true)
+        setModalTitle(modalTitle)
+        setModalContent(modalContent)
+    }
 
     return (
-        < Context.Provider value={{
+        < AppContext.Provider value={{
             isModalOpen,
             setIsModalOpen,
-            modalText: "",
-            setModalText: () => ""
+            modalTitle,
+            setModalTitle,
+            modalContent,
+            setModalContent,
+            handleModalOpen
         }}>
             {children}
-        </Context.Provider >
+        </AppContext.Provider >
     )
 }
 
 
-const useAppContext = () => {
-    return
+export const useAppContext = () => {
+    const value = useContext(AppContext)
+
+    return value
 }
-
-
-
-export default useAppContext

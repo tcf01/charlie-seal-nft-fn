@@ -1,6 +1,6 @@
-import moment from 'moment';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { ProgressBar, Form, Button } from "react-bootstrap";
+import moment from 'moment';
 
 
 interface MintPanelProps {
