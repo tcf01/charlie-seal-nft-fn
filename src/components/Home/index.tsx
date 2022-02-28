@@ -6,6 +6,7 @@ import Logo from '../../images/Logo.jpg';
 import MintPanel from '../MintPanel';
 import LoadingOverlay from 'react-loading-overlay';
 import moment from 'moment-timezone'
+import { useAppContext } from '../Context';
 
 
 
@@ -20,6 +21,8 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
     const [allSupply, setAllSupply] = useState(0)
     const [tokenLeft, setTokenLeft] = useState<number | null>(null);
     const [error, setError] = useState(false);
+
+    const { handleModalOpen } = useAppContext()
 
     useEffect(() => {
         const fetchSupply = async () => {
@@ -49,23 +52,23 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
 
     const onBuyClick = async (mintNum: number) => {
         try {
-            setError(false);
-            setIsLoadingOpen(true)
-
             if (!currentAccount) {
-                alert("You haven't connect your wallet yet!")
-
-                return
+                handleModalOpen("Alert", "You haven't connect your wallet yet!")
             } else {
+                setError(false);
+                setIsLoadingOpen(true)
+
                 const result = await buyNFT(mintNum);
 
                 console.log(result)
+
+                setIsLoadingOpen(false)
             }
         } catch (error) {
             setError(true);
-        } finally {
-            setIsLoadingOpen(false)
-        }
+        } /* finally {
+            console.log('have run')
+        } */
     }
 
     return (

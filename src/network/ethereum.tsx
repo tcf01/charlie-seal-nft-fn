@@ -37,17 +37,20 @@ export const buyNFT = async (number: number) => {
     const transactionParams = {
         to: contractAddress,
         from: ethereum.selectedAddress,
+        // NOTE: user 需要send幾多出比我地
         value: web3.utils.toHex(web3.utils.toWei('0.05', 'ether')),
-        gasLimit: web3.utils.toHex(300000),
-        gasPrice: web3.utils.toHex(web3.utils.toWei('350', 'gwei')),
-        data: contract.methods.freeMint(number, 1).encodeABI()
+        gasLimit: web3.utils.toHex(30),                         // The maximum gas allowed in this block.
+        gasPrice: web3.utils.toHex(web3.utils.toWei('350', 'gwei')),  //Gas price provided by the sender in wei.
+        data: contract.methods.freeMint(number).encodeABI()
     };
 
-    
-    return await ethereum.request({
+
+    const result = await ethereum.request({
         method: 'eth_sendTransaction',
         params: [transactionParams]
     })
+
+    return result
 }
 
 export const getToken = async (address: string) => {
