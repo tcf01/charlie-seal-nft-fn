@@ -1,5 +1,5 @@
 
-import React, { useState, SetStateAction, Dispatch, useContext } from 'react'
+import React, { useState, SetStateAction, Dispatch, useContext, useCallback } from 'react'
 
 interface ContextProviderProps {
     children: any
@@ -12,7 +12,10 @@ type ContextDefaultValues = {
     setModalTitle: Dispatch<SetStateAction<any>>,
     modalContent: string,
     setModalContent: Dispatch<SetStateAction<any>>,
-    handleModalOpen: (modalTitle: string, modalContent: string) => void
+    handleModalOpen: (modalTitle: string, modalContent: string) => void,
+    availableTokenNum: number
+    setAvailableTokenNum: Dispatch<SetStateAction<any>>,
+
 
 }
 
@@ -23,7 +26,9 @@ const defaultValues: ContextDefaultValues = {
     setModalTitle: () => "",
     modalContent: "",
     setModalContent: () => "",
-    handleModalOpen: (modalTitle: string, modalContent: string) => { }
+    handleModalOpen: (modalTitle: string, modalContent: string) => null,
+    availableTokenNum: 0,
+    setAvailableTokenNum: () => null,
 }
 
 
@@ -35,9 +40,9 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [modalTitle, setModalTitle] = useState("")
     const [modalContent, setModalContent] = useState("")
+    const [availableTokenNum, setAvailableTokenNum] = useState(0)
 
     const handleModalOpen = (modalTitle: string, modalContent: string) => {
-
         setIsModalOpen(true)
         setModalTitle(modalTitle)
         setModalContent(modalContent)
@@ -51,7 +56,9 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
             setModalTitle,
             modalContent,
             setModalContent,
-            handleModalOpen
+            handleModalOpen,
+            availableTokenNum, 
+            setAvailableTokenNum
         }}>
             {children}
         </AppContext.Provider >

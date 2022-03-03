@@ -22,6 +22,7 @@ const Header: React.FC<Props> = ({ currentAccount, setCurrentAccount }) => {
 
         try {
             const [account] = await ethereum.request({ method: 'eth_requestAccounts' });
+
             setCurrentAccount(account);
         } catch (err: any) {
             const errorMsgMapping: Record<string, string> = {

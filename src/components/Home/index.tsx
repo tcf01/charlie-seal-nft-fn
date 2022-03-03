@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Col, Container, Image, Row } from "react-bootstrap";
-import { buyNFT, getMaxSupply, getTotalSupply, getStartDate } from "../../network/ethereum";
+import { buyNFT, getCurrMintNumber, getPublicSaleAmount, getStartDate } from "../../network/ethereum";
 // import { style } from "./Home.styles";
 import Logo from '../../images/Logo.jpg';
 import MintPanel from '../MintPanel';
@@ -19,30 +19,30 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
     const [mintStartDate, setMintStartDate] = useState<any>("")
     const [isStartMintBegin, setIsStartMintBegin] = useState(false)
     const [allSupply, setAllSupply] = useState(0)
-    const [tokenLeft, setTokenLeft] = useState<number | null>(null);
     const [error, setError] = useState(false);
 
-    const { handleModalOpen } = useAppContext()
+    const { handleModalOpen, setAvailableTokenNum, availableTokenNum } = useAppContext()
+
 
     useEffect(() => {
         const fetchSupply = async () => {
-            const totalSupply = await getTotalSupply();
-            const maxSupply = await getMaxSupply();
+            const totalSupply = await getPublicSaleAmount();
+            const currMintNumber = await getCurrMintNumber();
 
 
             setAllSupply(totalSupply)
-            setTokenLeft(maxSupply - totalSupply);
+            setAvailableTokenNum(totalSupply - currMintNumber);
         }
 
         const fetchMintStartDate = async () => {
             const startDate = await getStartDate()
             const startDateInHKGTime = moment(startDate).tz('Asia/Hong_Kong')
             const currTimeInHKGTime = moment(Date.now()).tz('Asia/Hong_Kong')
-            const isStartBegin = startDateInHKGTime.isAfter(currTimeInHKGTime);
+            const isStartMint = startDateInHKGTime.isAfter(currTimeInHKGTime);
 
 
             setMintStartDate(startDate)
-            setIsStartMintBegin(isStartBegin)
+            setIsStartMintBegin(isStartMint)
         }
 
 
@@ -54,21 +54,26 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
         try {
             if (!currentAccount) {
                 handleModalOpen("Alert", "You haven't connect your wallet yet!")
-            } else {
-                setError(false);
-                setIsLoadingOpen(true)
 
+                return
+            } else {
+                setIsLoadingOpen(true)
                 const result = await buyNFT(mintNum);
 
-                console.log(result)
+                if (result === "") {
+                    const currSupply = await getCurrMintNumber()
 
-                setIsLoadingOpen(false)
+                    setAvailableTokenNum(allSupply - currSupply)
+                    handleModalOpen("Success", `You have successfully minted ${mintNum} tokens!`)
+                } else {
+                    handleModalOpen("Failed", result)
+                }
             }
         } catch (error) {
             setError(true);
-        } /* finally {
-            console.log('have run')
-        } */
+        } finally {
+            setIsLoadingOpen(false)
+        }
     }
 
     return (
@@ -79,7 +84,7 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
             styles={{
                 wrapper: (base) => ({
                     ...base,
-                    position: "inherit",
+                    position: "initial"
                 })
             }}
         >
@@ -99,20 +104,20 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
                         </Row>
                     </Col>
                 </Row>
-                <Row className="mt-5 justify-content-center">
+                <Row className="mt-5 justify-content-center align-items-center">
                     <Col lg={6} md={12}>
                         <Row>
-                            <Col className="d-flex justify-content-md-center">
-                                {tokenLeft && tokenLeft === 0 &&
+                            <Col className="d-flex justify-content-center">
+                                {availableTokenNum && availableTokenNum === 0 &&
                                     <h1>Sold out!</h1>
                                 }
-                                {tokenLeft && tokenLeft > 0 &&
-                                    <h1>{tokenLeft} token{tokenLeft > 1 && 's'} left!</h1>
+                                {availableTokenNum && availableTokenNum > 0 &&
+                                    <h1>{availableTokenNum} / {allSupply} still available!</h1>
                                 }
                             </Col>
                         </Row>
-                        <Row>
-                            <MintPanel isStartMintBegin={isStartMintBegin} mintStartDate={mintStartDate} allSupply={allSupply} tokenLeft={tokenLeft || 0} submitBtnText={"Mint!!!"} handleMint={(e: any) => onBuyClick(e)} />
+                        <Row className='justify-content-center'>
+                            <MintPanel isStartMintBegin={isStartMintBegin} mintStartDate={mintStartDate} allSupply={allSupply} tokenLeft={availableTokenNum || 0} submitBtnText={"Mint!!!"} handleMint={(number: number) => onBuyClick(number)} />
                             {error &&
                                 <Col className="mt-3 d-flex justify-content-md-center"
                                     lg={12}>

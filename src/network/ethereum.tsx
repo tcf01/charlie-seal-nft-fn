@@ -1,11 +1,13 @@
-import Web3 from 'web3';
-
+import { createAlchemyWeb3 } from "@alch/alchemy-web3"
 import abi from '../contracts/abi.json';
 import { AbiItem } from "web3-utils";
+const getRevertReason = require('eth-revert-reason')
 
-const rpcURL: string | undefined = process.env.REACT_APP_API_URL;
-const web3 = new Web3(rpcURL!!);
-const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS
+//@ts-ignore
+const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY || secrets.REACT_APP_ALCHEMY_KEY
+const web3 = createAlchemyWeb3(alchemyKey!!);
+//@ts-ignore
+const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || secrets.REACT_APP_ALCHEMY_KEY
 const contract = new web3.eth.Contract(abi as AbiItem[], contractAddress) || {};
 
 
@@ -14,43 +16,51 @@ export const getBalance = async (address: string) => {
     return web3.utils.fromWei(balance, 'ether');
 }
 
-export const getTotalSupply = async () => {
+export const getPublicSaleAmount = async () => {
     try {
-
-        const totalSupply = await contract?.methods?.totalSupply();
-
+        const totalSupply = await contract?.methods?.publicSaleAmount().call();
 
         return totalSupply
     } catch (e) {
-        return 10000
+        console.error('failed', e)
+
+        return 10999
     }
 }
 
-export const getMaxSupply = async () => {
-    const maxSupply = await contract.methods.MAX_SUPPLY;
+export const getCurrMintNumber = async () => {
+    const currMintNumber = await contract.methods.totalSupply().call();
 
-    return maxSupply
+    return currMintNumber
 }
 
 export const buyNFT = async (number: number) => {
-    const { ethereum } = window;
-    const transactionParams = {
-        to: contractAddress,
-        from: ethereum.selectedAddress,
-        // NOTE: user 需要send幾多出比我地
-        value: web3.utils.toHex(web3.utils.toWei('0.05', 'ether')),
-        gasLimit: web3.utils.toHex(30),                         // The maximum gas allowed in this block.
-        gasPrice: web3.utils.toHex(web3.utils.toWei('350', 'gwei')),  //Gas price provided by the sender in wei.
-        data: contract.methods.freeMint(number).encodeABI()
-    };
+    try {
+        const { ethereum } = window;
+        const transactionParams = {
+            to: contractAddress,
+            from: ethereum.selectedAddress,
+            value: web3.utils.toHex(web3.utils.toWei('0.01', 'ether')),
+            // gasLimit: /* web3.utils.toHex(30) */null,                         // The maximum gas allowed in this block.
+            // gasPrice: /* web3.utils.toHex(web3.utils.toWei('350', 'gwei')) */null,  //Gas price provided by the sender in wei.
+            data: contract.methods.freeMint(number).encodeABI(),
+            /*    maxPriorityFeePerGas: null,
+               maxFeePerGas: null,  */
+        };
 
 
-    const result = await ethereum.request({
-        method: 'eth_sendTransaction',
-        params: [transactionParams]
-    })
+        const result = await ethereum.request({
+            method: 'eth_sendTransaction',
+            params: [transactionParams]
+        })
 
-    return result
+        const reason = await getRevertReason(result)
+        return reason
+    } catch (e) {
+        const failedReason = await getRevertReason(e)
+
+        return failedReason
+    }
 }
 
 export const getToken = async (address: string) => {
@@ -62,9 +72,7 @@ export const getTokenUri = async (tokenId: number) => {
 }
 
 export const getStartDate = async () => {
-    const startDate = await contract?.methods?.totalSupply();  //function is not yet complete
+    const publicSaleTime = await contract?.methods?.publicOwnSaleStartTime().call();
 
-    //NOTE: date now is only for testing
-    return Date.now();
-    // return startDate
+    return publicSaleTime
 }

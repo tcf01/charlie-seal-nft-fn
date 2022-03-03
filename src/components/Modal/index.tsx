@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect } from 'react';
-import Popup from 'reactjs-popup';
 
 import './index.scss'
 import { useAppContext } from '../Context';
