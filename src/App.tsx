@@ -13,7 +13,6 @@ import { useWallet } from "./hooks/useWallet";
 import { ContextProvider as AppContext } from './components/Context';
 import CommonModal from './components/Modal';
 
-//from https://medium.com/@stevelukis/integrating-react-website-to-ethereum-network-with-web3-js-case-study-nft-minting-website-ae94c4107adc
 
 function App() {
     const { currentAccount, setCurrentAccount } = useWallet();

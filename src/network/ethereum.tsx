@@ -3,9 +3,9 @@ import abi from '../contracts/abi.json';
 import { AbiItem } from "web3-utils";
 const getRevertReason = require('eth-revert-reason')
 
-const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY 
+const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY
 const web3 = createAlchemyWeb3(alchemyKey!!);
-const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS 
+const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS
 const contract = new web3.eth.Contract(abi as AbiItem[], contractAddress) || {};
 
 
@@ -35,15 +35,18 @@ export const getCurrMintNumber = async () => {
 export const buyNFT = async (number: number) => {
     try {
         const { ethereum } = window;
+
+        const gasPrice = /* (await web3.eth.getGasPrice()) */web3.utils.toHex(web3.utils.toWei('350', 'gwei'))
+        const value = web3.utils.toHex(web3.utils.toWei('0', 'ether'))
+        const gasLimit = (web3.utils.toHex(300000))
+
         const transactionParams = {
+            value,
+            gasPrice,
+            gasLimit,                        
             to: contractAddress,
             from: ethereum.selectedAddress,
-            value: web3.utils.toHex(web3.utils.toWei('0.01', 'ether')),
-            // gasLimit: /* web3.utils.toHex(30) */null,                         // The maximum gas allowed in this block.
-            // gasPrice: /* web3.utils.toHex(web3.utils.toWei('350', 'gwei')) */null,  //Gas price provided by the sender in wei.
             data: contract.methods.freeMint(number).encodeABI(),
-            /*    maxPriorityFeePerGas: null,
-               maxFeePerGas: null,  */
         };
 
 
@@ -53,6 +56,8 @@ export const buyNFT = async (number: number) => {
         })
 
         const reason = await getRevertReason(result)
+
+
         return reason
     } catch (e) {
         const failedReason = await getRevertReason(e)

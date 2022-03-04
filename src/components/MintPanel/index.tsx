@@ -32,7 +32,7 @@ const MintPanel: React.FC<MintPanelProps> = ({ isStartMintBegin, mintStartDate, 
             }
         }
 
-        setNum(determineFinalVal())
+        setNum(/* determineFinalVal()  */num)
     }
 
     const onClickMint = () => {
