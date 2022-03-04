@@ -3,11 +3,9 @@ import abi from '../contracts/abi.json';
 import { AbiItem } from "web3-utils";
 const getRevertReason = require('eth-revert-reason')
 
-//@ts-ignore
-const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY || secrets.REACT_APP_ALCHEMY_KEY
+const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY 
 const web3 = createAlchemyWeb3(alchemyKey!!);
-//@ts-ignore
-const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || secrets.REACT_APP_ALCHEMY_KEY
+const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS 
 const contract = new web3.eth.Contract(abi as AbiItem[], contractAddress) || {};
 
 

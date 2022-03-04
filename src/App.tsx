@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -18,6 +18,9 @@ import CommonModal from './components/Modal';
 function App() {
     const { currentAccount, setCurrentAccount } = useWallet();
 
+    useEffect(() => {
+        console.log('the app is running', process.env.REACT_APP_CONTRACT_ADDRESS)
+    }, [])
 
     return (
         <AppContext>
