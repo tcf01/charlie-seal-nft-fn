@@ -32,7 +32,7 @@ const MintPanel: React.FC<MintPanelProps> = ({ isStartMintBegin, mintStartDate, 
             }
         }
 
-        //@ts-nocheck
+        console.log('no used',determineFinalVal())
         setNum(/* determineFinalVal()  */num)
     }
 
