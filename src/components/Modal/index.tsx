@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import './index.scss'
 import { useAppContext } from '../Context';
@@ -14,7 +14,7 @@ const CommonModal: React.FC<CommonModalProps> = () => {
 
     const closeModal = useCallback(() => {
         setIsModalOpen(false)
-    }, [])
+    }, [setIsModalOpen])
 
     return (
         isModalOpen ?

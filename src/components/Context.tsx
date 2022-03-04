@@ -1,5 +1,5 @@
 
-import React, { useState, SetStateAction, Dispatch, useContext, useCallback } from 'react'
+import React, { useState, SetStateAction, Dispatch, useContext } from 'react'
 
 interface ContextProviderProps {
     children: any
@@ -15,8 +15,6 @@ type ContextDefaultValues = {
     handleModalOpen: (modalTitle: string, modalContent: string) => void,
     availableTokenNum: number
     setAvailableTokenNum: Dispatch<SetStateAction<any>>,
-
-
 }
 
 const defaultValues: ContextDefaultValues = {
@@ -57,7 +55,7 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
             modalContent,
             setModalContent,
             handleModalOpen,
-            availableTokenNum, 
+            availableTokenNum,
             setAvailableTokenNum
         }}>
             {children}

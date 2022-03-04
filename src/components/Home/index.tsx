@@ -35,7 +35,7 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
         }
 
         const fetchMintStartDate = async () => {
-            const startDate = await getStartDate()
+            const startDate = Number(await getStartDate())
             const startDateInHKGTime = moment(startDate).tz('Asia/Hong_Kong')
             const currTimeInHKGTime = moment(Date.now()).tz('Asia/Hong_Kong')
             const isStartMint = startDateInHKGTime.isAfter(currTimeInHKGTime);
@@ -45,10 +45,9 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
             setIsStartMintBegin(isStartMint)
         }
 
-
         fetchSupply();
         fetchMintStartDate()
-    }, []);
+    }, [setAvailableTokenNum]);
 
     const onBuyClick = async (mintNum: number) => {
         try {
