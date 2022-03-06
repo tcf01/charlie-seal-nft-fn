@@ -18,7 +18,10 @@ function App() {
     const { currentAccount, setCurrentAccount } = useWallet();
 
     useEffect(() => {
-        console.log('the app is running', process.env.REACT_APP_CONTRACT_ADDRESS)
+        const contractAddr = process.env.REACT_APP_CONTRACT_ADDRESS || ""
+        const contractAddrInArray = contractAddr.split("")
+        
+        console.log('the app is running', contractAddr ? contractAddrInArray.splice(Math.ceil(contractAddrInArray.length - 6)).join("") : "")
     }, [])
 
     return (

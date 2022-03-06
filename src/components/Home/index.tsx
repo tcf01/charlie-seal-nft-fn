@@ -4,7 +4,7 @@ import { buyNFT, getCurrMintNumber, getPublicSaleAmount, getStartDate } from "..
 // import { style } from "./Home.styles";
 import Logo from '../../images/Logo.jpg';
 import MintPanel from '../MintPanel';
-import LoadingOverlay from 'react-loading-overlay';
+import OverallLoadingOverlay from 'react-loading-overlay';
 import moment from 'moment-timezone'
 import { useAppContext } from '../Context';
 
@@ -15,13 +15,13 @@ type Props = {
 }
 
 const Home: React.FC<Props> = ({ currentAccount }) => {
-    const [isLoadingOpen, setIsLoadingOpen] = useState(false)
+    const [isMintingLoadOn, setIsMintingLoadOn] = useState(false)
     const [mintStartDate, setMintStartDate] = useState<any>("")
-    const [isStartMintBegin, setIsStartMintBegin] = useState(false)
+    const [isPassMintPublicSaleDate, setIsPassMintPublicSaleDate] = useState(false)
     const [allSupply, setAllSupply] = useState(0)
     const [error, setError] = useState(false);
 
-    const { handleModalOpen, setAvailableTokenNum, availableTokenNum } = useAppContext()
+    const { handleModalOpen, setAvailableTokenNum, availableTokenNum, isOverallLoadingOpen, setMintPanelLoadingWord } = useAppContext()
 
 
     useEffect(() => {
@@ -42,7 +42,7 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
 
 
             setMintStartDate(startDate)
-            setIsStartMintBegin(isStartMint)
+            setIsPassMintPublicSaleDate(isStartMint)
         }
 
         fetchSupply();
@@ -56,7 +56,10 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
 
                 return
             } else {
-                setIsLoadingOpen(true)
+                setIsMintingLoadOn(true)
+                setMintPanelLoadingWord("connecting...")
+
+                
                 const result = await buyNFT(mintNum);
 
                 if (result.blockHash) {
@@ -71,15 +74,15 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
         } catch (error) {
             setError(true);
         } finally {
-            setIsLoadingOpen(false)
+            setIsMintingLoadOn(false)
         }
     }
 
     return (
-        <LoadingOverlay
-            active={isLoadingOpen}
+        <OverallLoadingOverlay
+            active={isOverallLoadingOpen}
             spinner
-            text={`Minting... Don't refresh the page`}
+            // text={`Minting... Don't refresh the page`}
             styles={{
                 wrapper: (base) => ({
                     ...base,
@@ -116,7 +119,8 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
                             </Col>
                         </Row>
                         <Row className='justify-content-center'>
-                            <MintPanel isStartMintBegin={isStartMintBegin} mintStartDate={mintStartDate} allSupply={allSupply} tokenLeft={availableTokenNum || 0} submitBtnText={"Mint!!!"} handleMint={(number: number) => onBuyClick(number)} />
+                            
+                            <MintPanel isMintingLoadOn={isMintingLoadOn} isPassMintPublicSaleDate={isPassMintPublicSaleDate} mintStartDate={mintStartDate} allSupply={allSupply} tokenLeft={availableTokenNum || 0} submitBtnText={"Mint"} handleMint={(number: number) => onBuyClick(number)} />
                             {error &&
                                 <Col className="mt-3 d-flex justify-content-md-center"
                                     lg={12}>
@@ -167,7 +171,7 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
                     </Accordion> */}
                 </Row>
             </Container>
-        </LoadingOverlay>
+        </OverallLoadingOverlay>
     )
 }
 

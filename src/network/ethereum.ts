@@ -57,6 +57,7 @@ export const buyNFT = async (number: number) => {
                 }
 
                 const res: BuyNFTRes = await contract.methods.freeMint(number).send(modifiedTxParam)
+                    .on('confirmation', (a: any, b: any) => { console.log('confirm the transaction'); })
 
                 return res
             }))

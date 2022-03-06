@@ -15,6 +15,11 @@ type ContextDefaultValues = {
     handleModalOpen: (modalTitle: string, modalContent: string) => void,
     availableTokenNum: number
     setAvailableTokenNum: Dispatch<SetStateAction<any>>,
+    isOverallLoadingOpen: boolean,
+    setIsOverallLoadingOpen: Dispatch<SetStateAction<any>>,
+
+    mintPanelLoadingWord: string,
+    setMintPanelLoadingWord: Dispatch<SetStateAction<any>>,
 }
 
 const defaultValues: ContextDefaultValues = {
@@ -27,6 +32,10 @@ const defaultValues: ContextDefaultValues = {
     handleModalOpen: (modalTitle: string, modalContent: string) => null,
     availableTokenNum: 0,
     setAvailableTokenNum: () => null,
+    isOverallLoadingOpen: false,
+    setIsOverallLoadingOpen: () => null,
+    mintPanelLoadingWord: "",
+    setMintPanelLoadingWord: () => "",
 }
 
 
@@ -39,6 +48,10 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
     const [modalTitle, setModalTitle] = useState("")
     const [modalContent, setModalContent] = useState("")
     const [availableTokenNum, setAvailableTokenNum] = useState(0)
+    const [isOverallLoadingOpen, setIsOverallLoadingOpen] = useState(false)
+    const [mintPanelLoadingWord, setMintPanelLoadingWord] = useState("")
+
+
 
     const handleModalOpen = (modalTitle: string, modalContent: string) => {
         setIsModalOpen(true)
@@ -56,7 +69,11 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
             setModalContent,
             handleModalOpen,
             availableTokenNum,
-            setAvailableTokenNum
+            setAvailableTokenNum,
+            isOverallLoadingOpen,
+            setIsOverallLoadingOpen,
+            mintPanelLoadingWord,
+            setMintPanelLoadingWord
         }}>
             {children}
         </AppContext.Provider >

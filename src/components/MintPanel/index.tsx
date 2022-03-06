@@ -3,6 +3,7 @@ import { ProgressBar, Form } from "react-bootstrap";
 import moment from 'moment';
 
 import './index.scss'
+import MintPanelLoading from './loadingButton';
 
 
 interface MintPanelProps {
@@ -11,10 +12,12 @@ interface MintPanelProps {
     allSupply: number
     tokenLeft: number
     mintStartDate: any
-    isStartMintBegin: boolean
+    isPassMintPublicSaleDate: boolean
+    isMintingLoadOn: boolean
+
 }
 
-const MintPanel: React.FC<MintPanelProps> = ({ isStartMintBegin, mintStartDate, submitBtnText, handleMint, allSupply, tokenLeft }) => {
+const MintPanel: React.FC<MintPanelProps> = ({ isMintingLoadOn, isPassMintPublicSaleDate, mintStartDate, submitBtnText, handleMint, allSupply, tokenLeft }) => {
     const [num, setNum] = useState(1)
     const handleOnChange = (e: any) => {
         const numToMint = e.target.value
@@ -32,7 +35,7 @@ const MintPanel: React.FC<MintPanelProps> = ({ isStartMintBegin, mintStartDate, 
             }
         }
 
-        console.log('no used',determineFinalVal())
+        console.log('', determineFinalVal())
         setNum(/* determineFinalVal()  */numToMint)
     }
 
@@ -43,7 +46,7 @@ const MintPanel: React.FC<MintPanelProps> = ({ isStartMintBegin, mintStartDate, 
     return (
         <>
             <div className="mint-panel-wrapper">
-                {isStartMintBegin ? <div>Minting is now available</div> : <div>Mint will started on {moment(mintStartDate).format(/* "YYYYMMDD HH:mm z" */"LLL")} in HKG time(GMT+8)</div>}
+                {isPassMintPublicSaleDate ? <div>Minting is now available</div> : <div>Mint will started on {moment(mintStartDate).format(/* "YYYYMMDD HH:mm z" */"LLL")} in HKG time(GMT+8)</div>}
                 <ProgressBar max={allSupply} now={tokenLeft} style={{ "paddingRight": "0px", "paddingLeft": "0px" }} />
                 <br />
 
@@ -51,7 +54,9 @@ const MintPanel: React.FC<MintPanelProps> = ({ isStartMintBegin, mintStartDate, 
                     <Form.Group className="mb-3" style={{ "width": "50%" }}>
                         <Form.Control value={num} type='number' onChange={handleOnChange} min={0} max={2} className={"mint-panel-input"} />
                     </Form.Group>
-                    <div className='submit-btn' onClick={onClickMint}> {submitBtnText} </div>
+                    {isMintingLoadOn
+                        ? <MintPanelLoading />
+                        : <div className='submit-btn' onClick={onClickMint}> {submitBtnText} </div>}
                 </Form>
 
                 <br />
