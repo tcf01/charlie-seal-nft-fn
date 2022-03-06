@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'FatFrank';
-    src: local('FatFrank'), url(./fonts/FatFrank.ttf) format('truetype');
+    src: local('FatFrank'), url(./fonts/FatFrank.woff2) format('truetype');
 }
 
 * {

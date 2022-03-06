@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css'
-import './fonts/FatFrank.ttf'
+import './fonts/FatFrank.woff2'
 
 // Components
 import Home from "./components/Home";

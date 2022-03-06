@@ -31,7 +31,13 @@
                 top: 3px;
             }
         }
-        .content-wrapper {}
+        .content-wrapper {
+            display: flex;
+            justify-content: center;
+            .content {
+                padding: 0px 10px;
+            }
+        }
         .buttons-wrapper {
             .actions {
                 width: 100%;

@@ -59,7 +59,7 @@ const Home: React.FC<Props> = ({ currentAccount }) => {
                 setIsLoadingOpen(true)
                 const result = await buyNFT(mintNum);
 
-                if (result === "") {
+                if (result.blockHash) {
                     const currSupply = await getCurrMintNumber()
 
                     setAvailableTokenNum(allSupply - currSupply)

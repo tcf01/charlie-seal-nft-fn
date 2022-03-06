@@ -1,7 +1,8 @@
 import { createAlchemyWeb3 } from "@alch/alchemy-web3"
 import abi from '../contracts/abi.json';
 import { AbiItem } from "web3-utils";
-const getRevertReason = require('eth-revert-reason')
+import { BuyNFTRes } from "../interface/type";
+// const getRevertReason = require('eth-revert-reason')
 
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY
 const web3 = createAlchemyWeb3(alchemyKey!!);
@@ -35,34 +36,38 @@ export const getCurrMintNumber = async () => {
 export const buyNFT = async (number: number) => {
     try {
         const { ethereum } = window;
-
-        const gasPrice = /* (await web3.eth.getGasPrice()) */web3.utils.toHex(web3.utils.toWei('350', 'gwei'))
         const value = web3.utils.toHex(web3.utils.toWei('0', 'ether'))
-        const gasLimit = (web3.utils.toHex(300000))
 
-        const transactionParams = {
-            value,
-            gasPrice,
-            gasLimit,                        
-            to: contractAddress,
-            from: ethereum.selectedAddress,
-            data: contract.methods.freeMint(number).encodeABI(),
-        };
+        // NOTE: estimateGas function return the gasLimit, it is a number
+        const mintRes = (await contract.methods.freeMint(number).estimateGas({ from: ethereum.selectedAddress })
+            .then(async (estimatedGasLimit: number) => {
+                console.log("estimatedGasLimit: ", estimatedGasLimit * 0 + 1111)
 
-
-        const result = await ethereum.request({
-            method: 'eth_sendTransaction',
-            params: [transactionParams]
-        })
-
-        const reason = await getRevertReason(result)
+                const gasPrice = await web3.eth.getGasPrice()
+                const tips = (web3.utils.toWei('1', 'gwei'))
+                const totalGasPrice = String(Number(gasPrice) + Number(tips))
 
 
-        return reason
-    } catch (e) {
-        const failedReason = await getRevertReason(e)
+                const modifiedTxParam = {
+                    value,
+                    gasPrice: totalGasPrice,
+                    // gasLimit: estimatedGasLimit * 10,
+                    to: contractAddress,
+                    from: ethereum.selectedAddress
+                }
 
-        return failedReason
+                const res: BuyNFTRes = await contract.methods.freeMint(number).send(modifiedTxParam)
+
+                return res
+            }))
+
+        return mintRes
+    } catch (e: any) {
+        console.error(e)
+        const fullMsg = e?.message?.split("reverted: ")
+        const errorMsg = fullMsg[fullMsg.length - 1] || "please contact us for help"
+
+        return errorMsg
     }
 }
 
